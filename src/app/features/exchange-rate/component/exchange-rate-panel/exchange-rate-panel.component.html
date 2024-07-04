@@ -1,0 +1,81 @@
+<div class="exchange-rate">
+  @if (error) {
+    <div aria-live="assertive">{{ error.message }}</div>
+  } 
+  @if (optionsCurrency) {
+    <form
+      [formGroup]="exchangeForm"
+      (ngSubmit)="exchangeSubmit()"
+      class="form-container"
+    >
+      <div class="exchange-panel flex">
+        <fieldset class="convert-from">
+          <div class="input-form">
+            <label for="amount">Amount:</label>
+            <input 
+              name="amount" 
+              formControlName="amount"
+              type="number"
+              aria-label="Amount"
+              aria-required="true"
+            />
+          </div>
+          <div class="input-form">
+            <label for="currency-from">From:</label>
+            <select
+              formControlName="currencyFrom"
+              id="currency-from"
+              aria-label="Select currency to convert from"
+              aria-required="true"
+              class="currency-from selection"
+            >
+              @for(currency of optionsCurrency.rates; track currency){
+              <option [value]="currency.code">
+                {{ currency.code }}
+              </option>
+              }
+            </select>
+          </div>
+        </fieldset>
+        <button type="button" class="exchange-btn" (click)="exchangeCurrency()">
+          <img src="6675953.png" alt="exchange-image" />
+        </button>
+        <fieldset class="convert-to input-form">
+          <label for="currency-to">To:</label>
+
+          <select
+            formControlName="currencyTo"
+            name="currency-to"
+            id="currency-to"
+            aria-label="Select currency to convert to"
+            aria-required="true"
+            class="currency-to selection"
+          >
+            @for(currency of optionsCurrency.rates; track currency){
+            <option [value]="currency.code">
+              {{ currency.code }}
+            </option>
+            }
+          </select>
+        </fieldset>
+      </div>
+      <div class="convert-container flex">
+        <div>
+          @if(exchangeResult){
+          <p class="exchange-from">{{ exchangeAmount }} {{ exchangeFrom }} =</p>
+          <p class="exchange-to">
+            {{ exchangeResult | number : "1.1-6" }} {{ exchangeTo }}
+          </p>
+          }
+        </div>
+        <button
+          class="convert-btn"
+          type="submit"
+          [disabled]="!exchangeForm.valid || loading !== LoadingState.LOADED"
+        >
+          Convert to
+        </button>
+      </div>
+    </form>
+  }
+</div>

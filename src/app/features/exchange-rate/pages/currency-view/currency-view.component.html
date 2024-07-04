@@ -1,0 +1,65 @@
+<div class="currency-page-content">
+  <app-exchange-rate-panel
+    [optionsCurrency]="currencyTable"
+    aria-live="polite"
+  ></app-exchange-rate-panel>
+  @if (currencyTable) {
+    <div class="currency-container">
+      <div class="input-form">
+        <label for="date">Currency Date:</label>
+        <input
+          type="date"
+          id="date"
+          [(ngModel)]="currencyDate"
+          (ngModelChange)="changeDate()"
+          name="currencyDate"
+          [max]="currentDate"
+          class="currency-date"
+          aria-label="Select currency date"
+          [disabled]="loading !== LoadingState.LOADED"
+        />
+      </div>
+      <div
+        class="rates-container"
+        [ngClass]="{ 'loading-table': loading === LoadingState.LOADING }"
+        aria-label="Currency exchange rates"
+      >
+        @if (loading === LoadingState.LOADING) {
+          <div class="loading">Loading table...</div>
+        }
+        @if (errors) {
+          <div aria-live="assertive">{{ errors.message }}</div>
+        } 
+        @if(currencyTable.rates[0].ask && currencyTable.rates[0].bid) {
+          <div class="rate-header row">
+            <div>Name</div>
+            <div>Code</div>
+            <div>Sell</div>
+            <div>Buy</div>
+          </div>
+        @for(rate of currencyTable.rates; track rate.code) {
+          <div class="rate row">
+            <div>{{ rate.currency }}</div>
+            <div>{{ rate.code }}</div>
+            <div>{{ rate.bid | number : "1.1-3" }}</div>
+            <div>{{ rate.ask | number : "1.1-3" }}</div>
+          </div>
+        }
+      } @else if (currencyTable.rates[0].mid) {
+          <div class="rate-header row">
+            <div>Name</div>
+            <div>Code</div>
+            <div>Mid</div>
+          </div>
+        @for(rate of currencyTable.rates; track rate.code) {
+          <div class="rate row">
+            <div>{{ rate.currency }}</div>
+            <div>{{ rate.code }}</div>
+            <div>{{ rate.mid | number : "1.1-3" }}</div>
+          </div>
+        } 
+      }
+      </div>
+    </div>
+  }
+</div>
